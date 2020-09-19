@@ -489,10 +489,14 @@
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 
+  //HEVO e3d v6
+  #define DEFAULT_Kp 36.62
+  #define DEFAULT_Ki 3.81
+  #define DEFAULT_Kd 87.88
   // Ultimaker
-  #define DEFAULT_Kp 18.98
-  #define DEFAULT_Ki 1.45
-  #define DEFAULT_Kd 62.5
+  //#define DEFAULT_Kp 18.98
+  //#define DEFAULT_Ki 1.45
+  //#define DEFAULT_Kd 62.5
 
   // MakerGear
   //#define DEFAULT_Kp 7.0
@@ -523,9 +527,9 @@
  * heater. If your configuration is significantly different than this and you don't understand
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
-#define PIDTEMPBED
+//#define PIDTEMPBED
 
-//#define BED_LIMIT_SWITCHING
+#define BED_LIMIT_SWITCHING
 
 /**
  * Max Bed Power
@@ -539,11 +543,16 @@
   //#define MIN_BED_POWER 0
   //#define PID_BED_DEBUG // Sends debug data to the serial port.
 
+  //HEVO buildtak up
+  #define DEFAULT_bedKp 140.80
+  #define DEFAULT_bedKi 28.13
+  #define DEFAULT_bedKd 469.81
+
   //120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   //from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp 10.00
-  #define DEFAULT_bedKi .023
-  #define DEFAULT_bedKd 305.4
+  //#define DEFAULT_bedKp 10.00
+  //#define DEFAULT_bedKi .023
+  //#define DEFAULT_bedKd 305.4
 
   //120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   //from pidautotune
@@ -747,7 +756,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 160, 160, 800, 500 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 1280, 1280, 6400, 6520 }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -993,7 +1002,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { 22, 0, -3.15 }
+#define NOZZLE_TO_PROBE_OFFSET { 22, 0, -2 }
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
