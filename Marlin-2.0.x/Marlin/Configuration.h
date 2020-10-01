@@ -756,7 +756,8 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 312, 312, 1600, 1630 }
+// 320.846; //XY steps need to be indetical
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 320.846, 320.846, 1600, 1630 }
 
 /**
  * Default Max Feed Rate (mm/s)
