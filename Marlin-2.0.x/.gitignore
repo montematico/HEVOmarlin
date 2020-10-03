@@ -52,6 +52,7 @@ tags
 *.o
 *.obj
 *.ino.cpp
+*.bin
 
 # Precompiled Headers
 *.gch
