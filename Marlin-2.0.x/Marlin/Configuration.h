@@ -617,8 +617,8 @@
 #define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
 //#define USE_ZMIN_PLUG
-#define USE_XMAX_PLUG
-#define USE_YMAX_PLUG
+//#define USE_XMAX_PLUG
+//#define USE_YMAX_PLUG
 //#define USE_ZMAX_PLUG
 
 // Enable pullup for all endstops to prevent a floating state
@@ -736,7 +736,7 @@
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
 // 320.846; //XY steps need to be indetical
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 321.981, 320.981, 1600, 1630 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 320.000, 320.000, 1600, 1630 }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -1117,8 +1117,8 @@
 // @section machine
 
 // The size of the print bed
-#define X_BED_SIZE 300
-#define Y_BED_SIZE 300
+#define X_BED_SIZE 295
+#define Y_BED_SIZE 295
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #define X_MIN_POS -10
