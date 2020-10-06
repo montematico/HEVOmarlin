@@ -614,35 +614,35 @@
 // Specify here all the endstop connectors that are connected to any endstop or probe.
 // Almost all printers will be using one per axis. Probes will use one or more of the
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
-#define USE_XMIN_PLUG
+//#define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
 //#define USE_ZMIN_PLUG
-//#define USE_XMAX_PLUG
+#define USE_XMAX_PLUG
 //#define USE_YMAX_PLUG
 //#define USE_ZMAX_PLUG
 
 // Enable pullup for all endstops to prevent a floating state
-#define ENDSTOPPULLUPS
+//#define ENDSTOPPULLUPS
 #if DISABLED(ENDSTOPPULLUPS)
   // Disable ENDSTOPPULLUPS to set pullups individually
-  #define ENDSTOPPULLUP_XMAX
-  #define ENDSTOPPULLUP_YMAX
+  //#define ENDSTOPPULLUP_XMAX
+  //#define ENDSTOPPULLUP_YMAX
   //#define ENDSTOPPULLUP_ZMAX
-  #define ENDSTOPPULLUP_XMIN
-  #define ENDSTOPPULLUP_YMIN
+  //#define ENDSTOPPULLUP_XMIN
+  //#define ENDSTOPPULLUP_YMIN
   //#define ENDSTOPPULLUP_ZMIN
-  //#define ENDSTOPPULLUP_ZMIN_PROBE
+  #define ENDSTOPPULLUP_ZMIN_PROBE
 #endif
 
 // Enable pulldown for all endstops to prevent a floating state
 //#define ENDSTOPPULLDOWNS
 #if DISABLED(ENDSTOPPULLDOWNS)
   // Disable ENDSTOPPULLDOWNS to set pulldowns individually
-  //#define ENDSTOPPULLDOWN_XMAX
-  //#define ENDSTOPPULLDOWN_YMAX
+  #define ENDSTOPPULLDOWN_XMAX
+  #define ENDSTOPPULLDOWN_YMAX
   //#define ENDSTOPPULLDOWN_ZMAX
-  //#define ENDSTOPPULLDOWN_XMIN
-  //#define ENDSTOPPULLDOWN_YMIN
+  #define ENDSTOPPULLDOWN_XMIN
+  #define ENDSTOPPULLDOWN_YMIN
   //#define ENDSTOPPULLDOWN_ZMIN
   //#define ENDSTOPPULLDOWN_ZMIN_PROBE
 #endif
@@ -1110,7 +1110,7 @@
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
-#define X_HOME_DIR -1
+#define X_HOME_DIR 1
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
 
@@ -1121,13 +1121,17 @@
 #define Y_BED_SIZE 295
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
-#define X_MIN_POS -10
+#define X_MIN_POS 4
 #define Y_MIN_POS -8
 #define Z_MIN_POS 0
-#define X_MAX_POS X_BED_SIZE
+#define X_MAX_POS 299
 #define Y_MAX_POS Y_BED_SIZE
 #define Z_MAX_POS 545
-
+//Values for min are
+//XMIN -10
+//YMIN -8
+//XMAX X_BED_SIZE
+//YMAX Y_BED_SIZE
 /**
  * Software Endstops
  *
