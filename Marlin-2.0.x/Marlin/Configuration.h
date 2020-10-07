@@ -622,7 +622,7 @@
 //#define USE_ZMAX_PLUG
 
 // Enable pullup for all endstops to prevent a floating state
-//#define ENDSTOPPULLUPS
+#define ENDSTOPPULLUPS
 #if DISABLED(ENDSTOPPULLUPS)
   // Disable ENDSTOPPULLUPS to set pullups individually
   //#define ENDSTOPPULLUP_XMAX
@@ -638,11 +638,11 @@
 //#define ENDSTOPPULLDOWNS
 #if DISABLED(ENDSTOPPULLDOWNS)
   // Disable ENDSTOPPULLDOWNS to set pulldowns individually
-  #define ENDSTOPPULLDOWN_XMAX
-  #define ENDSTOPPULLDOWN_YMAX
+  //#define ENDSTOPPULLDOWN_XMAX
+  //#define ENDSTOPPULLDOWN_YMAX
   //#define ENDSTOPPULLDOWN_ZMAX
-  #define ENDSTOPPULLDOWN_XMIN
-  #define ENDSTOPPULLDOWN_YMIN
+  //#define ENDSTOPPULLDOWN_XMIN
+  //#define ENDSTOPPULLDOWN_YMIN
   //#define ENDSTOPPULLDOWN_ZMIN
   //#define ENDSTOPPULLDOWN_ZMIN_PROBE
 #endif
@@ -1088,7 +1088,7 @@
 // @section extruder
 
 // For direct drive extruder v9 set to true, for geared extruder set to false.
-#define INVERT_E0_DIR false
+#define INVERT_E0_DIR true
 #define INVERT_E1_DIR false
 #define INVERT_E2_DIR false
 #define INVERT_E3_DIR false
