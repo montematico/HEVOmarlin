@@ -32,11 +32,10 @@
  */
 #define CONFIGURATION_ADV_H_VERSION 020007
 
-// @section temperature
-
 //===========================================================================
 //============================= Thermal Settings ============================
 //===========================================================================
+// @section temperature
 
 /**
  * Thermocouple sensors are quite sensitive to noise.  Any noise induced in
@@ -125,9 +124,19 @@
   #define HEATER_BED_INVERTING true
 #endif
 
-/**
- * Heated Chamber settings
- */
+//
+// Heated Bed Bang-Bang options
+//
+#if DISABLED(PIDTEMPBED)
+  #define BED_CHECK_INTERVAL 5000   // (ms) Interval between checks in bang-bang control
+  #if ENABLED(BED_LIMIT_SWITCHING)
+    #define BED_HYSTERESIS 2        // (°C) Only set the relevant heater state when ABS(T-target) > BED_HYSTERESIS
+  #endif
+#endif
+
+//
+// Heated Chamber options
+//
 #if TEMP_SENSOR_CHAMBER
   #define CHAMBER_MINTEMP             5
   #define CHAMBER_MAXTEMP            60
@@ -135,12 +144,28 @@
   //#define CHAMBER_LIMIT_SWITCHING
   //#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin
   //#define HEATER_CHAMBER_INVERTING false
-#endif
 
-#if DISABLED(PIDTEMPBED)
-  #define BED_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
-  #if ENABLED(BED_LIMIT_SWITCHING)
-    #define BED_HYSTERESIS 2 // Only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
+  //#define CHAMBER_FAN               // Enable a fan on the chamber
+  #if ENABLED(CHAMBER_FAN)
+    #define CHAMBER_FAN_MODE 2        // Fan control mode: 0=Static; 1=Linear increase when temp is higher than target; 2=V-shaped curve.
+    #if CHAMBER_FAN_MODE == 0
+      #define CHAMBER_FAN_BASE  255   // Chamber fan PWM (0-255)
+    #elif CHAMBER_FAN_MODE == 1
+      #define CHAMBER_FAN_BASE  128   // Base chamber fan PWM (0-255); turns on when chamber temperature is above the target
+      #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C above target
+    #elif CHAMBER_FAN_MODE == 2
+      #define CHAMBER_FAN_BASE  128   // Minimum chamber fan PWM (0-255)
+      #define CHAMBER_FAN_FACTOR 25   // PWM increase per °C difference from target
+    #endif
+  #endif
+
+  //#define CHAMBER_VENT              // Enable a servo-controlled vent on the chamber
+  #if ENABLED(CHAMBER_VENT)
+    #define CHAMBER_VENT_SERVO_NR  1  // Index of the vent servo
+    #define HIGH_EXCESS_HEAT_LIMIT 5  // How much above target temp to consider there is excess heat in the chamber
+    #define LOW_EXCESS_HEAT_LIMIT 3
+    #define MIN_COOLING_SLOPE_TIME_CHAMBER_VENT 20
+    #define MIN_COOLING_SLOPE_DEG_CHAMBER_VENT 1.5
   #endif
 #endif
 
@@ -626,7 +651,7 @@
  * the position of the toolhead relative to the workspace.
  */
 
-//#define SENSORLESS_BACKOFF_MM  { 10, 10 }     // (mm) Backoff from endstops before sensorless homing
+//#define SENSORLESS_BACKOFF_MM  { 2, 2 }     // (mm) Backoff from endstops before sensorless homing
 
 #define HOMING_BUMP_MM      { 0, 0, 0 }       // (mm) Backoff from endstops after first bump
 #define HOMING_BUMP_DIVISOR { 2, 2, 4 }       // Re-Bump Speed Divisor (Divides the Homing Feedrate)
@@ -634,7 +659,7 @@
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (mm) Backoff from endstops after homing
 
 //#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
-#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
+//#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
 
 // @section bltouch
@@ -771,6 +796,7 @@
 //
 #define ASSISTED_TRAMMING
 #if ENABLED(ASSISTED_TRAMMING)
+
   // Define positions for probing points, use the hotend as reference not the sensor.
   #define TRAMMING_POINT_XY { {  20, 20 }, { 280,  20 }, { 280, 280 }, { 20, 280 } }
 
@@ -780,11 +806,9 @@
   #define TRAMMING_POINT_NAME_3 "Back-Right"
   #define TRAMMING_POINT_NAME_4 "Back-Left"
 
-  // Enable to restore leveling setup after operation
-  #define RESTORE_LEVELING_AFTER_G35
-
-  // Add a menu item for Assisted Tramming
-  #define ASSISTED_TRAMMING_MENU_ITEM
+  #define RESTORE_LEVELING_AFTER_G35    // Enable to restore leveling setup after operation
+  //#define REPORT_TRAMMING_MM          // Report Z deviation (mm) for each point relative to the first
+  #define ASSISTED_TRAMMING_MENU_ITEM // Add a menu item for Assisted Tramming
 
   /**
    * Screw thread:
@@ -793,6 +817,7 @@
    *   M5: 50 = Clockwise, 51 = Counter-Clockwise
    */
   #define TRAMMING_SCREW_THREAD 30
+
 #endif
 
 // @section motion
@@ -1048,6 +1073,14 @@
 
 #if HAS_LCD_MENU
 
+  // Add Probe Z Offset calibration to the Z Probe Offsets menu
+  #if HAS_BED_PROBE
+    #define PROBE_OFFSET_WIZARD
+    #if ENABLED(PROBE_OFFSET_WIZARD)
+      #define PROBE_OFFSET_START -5.0   // Estimated nozzle-to-probe Z offset, plus a little extra
+    #endif
+  #endif
+
   // Include a page of printer information in the LCD Main Menu
   //#define LCD_INFO_MENU
   #if ENABLED(LCD_INFO_MENU)
@@ -1148,7 +1181,7 @@
 
   //#define MENU_ADDAUTOSTART               // Add a menu option to run auto#.g files
 
-  #define EVENT_GCODE_SD_ABORT "G91 \n G1 Z5 \n G28XY"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
+  #define EVENT_GCODE_SD_ABORT "M104 S0 \n M140 S0 \n G91 \n G1 Z5 \n G28XY \n M84 \n M107"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
 
   #if ENABLED(PRINTER_EVENT_LEDS)
     #define PE_LEDS_COMPLETED_TIME  (30*60) // (seconds) Time to keep the LED "done" color before restoring normal illumination
@@ -1342,7 +1375,7 @@
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
   //#define USE_BIG_EDIT_FONT
 
-  // A smaller font may be used on the Info Screen. Costs 2300 bytes of PROGMEM.
+  // A smaller font may be used on the Info Screen. Costs 2434 bytes of PROGMEM.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
   //#define USE_SMALL_INFOFONT
 
@@ -1527,10 +1560,9 @@
 #endif
 
 //
-// FSMC / SPI Graphical TFT
+// Classic UI Options
 //
 #if TFT_SCALED_DOGLCD
-  //#define GRAPHICAL_TFT_ROTATE_180
   //#define TFT_MARLINUI_COLOR 0xFFFF // White
   //#define TFT_MARLINBG_COLOR 0x0000 // Black
   //#define TFT_DISABLED_COLOR 0x0003 // Almost black
@@ -1669,10 +1701,10 @@
 
 #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
   // Override the mesh area if the automatic (max) area is too large
-  //#define MESH_MIN_X 10
-  //#define MESH_MIN_Y 10
-  //#define MESH_MAX_X X_BED_SIZE - (10)
-  //#define MESH_MAX_Y Y_BED_SIZE - (10)
+  //#define MESH_MIN_X MESH_INSET
+  //#define MESH_MIN_Y MESH_INSET
+  //#define MESH_MAX_X X_BED_SIZE - (MESH_INSET)
+  //#define MESH_MAX_Y Y_BED_SIZE - (MESH_INSET)
 #endif
 
 /**
@@ -1768,6 +1800,7 @@
   #define N_ARC_CORRECTION       25 // Number of interpolated segments between corrections
   //#define ARC_P_CIRCLES           // Enable the 'P' parameter to specify complete circles
   //#define CNC_WORKSPACE_PLANES    // Allow G2/G3 to operate in XY, ZX, or YZ planes
+  //#define SF_ARC_FIX              // Enable only if using SkeinForge with "Arc Point" fillet procedure
 #endif
 
 // Support for G5 with XYZE destination and IJPQ offsets. Requires ~2666 bytes.
@@ -2230,15 +2263,9 @@
   #define HOLD_MULTIPLIER    0.5  // Scales down the holding current from run current
   #define INTERPOLATE       true  // Interpolate X/Y/Z_MICROSTEPS to 256
 
-  //X current may also 840 TEST THIS  
   #if AXIS_IS_TMC(X)
-<<<<<<< HEAD
-    #define X_CURRENT       1118      // (mA) RMS current. Multiply by 1.414 for peak current.
+    #define X_CURRENT       1118        // (mA) RMS current. Multiply by 1.414 for peak current.
     #define X_CURRENT_HOME  559  // (mA) RMS current for sensorless homing
-=======
-    #define X_CURRENT       800        // (mA) RMS current. Multiply by 1.414 for peak current.
-    #define X_CURRENT_HOME  X_CURRENT  // (mA) RMS current for sensorless homing
->>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define X_MICROSTEPS     64    // 0..256
     #define X_RSENSE          0.11
     #define X_CHAIN_POS      -1    // <=0 : Not chained. 1 : MCU MOSI connected. 2 : Next in chain, ...
@@ -2253,13 +2280,8 @@
   #endif
 
   #if AXIS_IS_TMC(Y)
-<<<<<<< HEAD
     #define Y_CURRENT       1118
     #define Y_CURRENT_HOME  559
-=======
-    #define Y_CURRENT       800
-    #define Y_CURRENT_HOME  Y_CURRENT
->>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define Y_MICROSTEPS     64
     #define Y_RSENSE          0.11
     #define Y_CHAIN_POS      -1
@@ -2274,13 +2296,8 @@
   #endif
 
   #if AXIS_IS_TMC(Z)
-<<<<<<< HEAD
-    #define Z_CURRENT       1188
+    #define Z_CURRENT       1118
     #define Z_CURRENT_HOME  559
-=======
-    #define Z_CURRENT       800
-    #define Z_CURRENT_HOME  Z_CURRENT
->>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define Z_MICROSTEPS     64
     #define Z_RSENSE          0.11
     #define Z_CHAIN_POS      -1
@@ -2311,11 +2328,7 @@
   #endif
 
   #if AXIS_IS_TMC(E0)
-<<<<<<< HEAD
-    #define E0_CURRENT      1188
-=======
     #define E0_CURRENT      800
->>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define E0_MICROSTEPS    64
     #define E0_RSENSE         0.11
     #define E0_CHAIN_POS     -1
@@ -2323,7 +2336,7 @@
 
   #if AXIS_IS_TMC(E1)
     #define E1_CURRENT      800
-    #define E1_MICROSTEPS    256
+    #define E1_MICROSTEPS    64
     #define E1_RSENSE         0.11
     #define E1_CHAIN_POS     -1
   #endif
@@ -2533,24 +2546,20 @@
    *
    * Comment *_STALL_SENSITIVITY to disable sensorless homing for that axis.
    */
-<<<<<<< HEAD
-  //#define IMPROVE_HOMING_RELIABILITY
-=======
->>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
   #define SENSORLESS_HOMING // StallGuard capable drivers only
 
   #if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
     // TMC2209: 0...255. TMC2130: -64...63
-    #define X_STALL_SENSITIVITY  128
+    #define X_STALL_SENSITIVITY  8
     #define X2_STALL_SENSITIVITY X_STALL_SENSITIVITY
-    #define Y_STALL_SENSITIVITY  128
+    #define Y_STALL_SENSITIVITY  8
     #define Y2_STALL_SENSITIVITY Y_STALL_SENSITIVITY
     //#define Z_STALL_SENSITIVITY  8
     //#define Z2_STALL_SENSITIVITY Z_STALL_SENSITIVITY
     //#define Z3_STALL_SENSITIVITY Z_STALL_SENSITIVITY
     //#define Z4_STALL_SENSITIVITY Z_STALL_SENSITIVITY
     //#define SPI_ENDSTOPS              // TMC2130 only
-    #define IMPROVE_HOMING_RELIABILITY
+    //#define IMPROVE_HOMING_RELIABILITY
   #endif
 
   /**
@@ -2563,11 +2572,7 @@
    *
    * Values from 0..1023, -1 to disable homing phase for that axis.
    */
-<<<<<<< HEAD
-   //#define TMC_HOME_PHASE { 640, 640, -1 }
-=======
-  #define TMC_HOME_PHASE { 896, 896, 896 }
->>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
+   //#define TMC_HOME_PHASE { 896, 896, 896 }
 
   /**
    * Beta feature!
@@ -3371,6 +3376,25 @@
 #endif
 
 /**
+ * Mechanical Gantry Calibration
+ * Modern replacement for the Prusa TMC_Z_CALIBRATION.
+ * Adds capability to work with any adjustable current drivers.
+ * Implemented as G34 because M915 is deprecated.
+ */
+//#define MECHANICAL_GANTRY_CALIBRATION
+#if ENABLED(MECHANICAL_GANTRY_CALIBRATION)
+  #define GANTRY_CALIBRATION_CURRENT          600     // Default calibration current in ma
+  #define GANTRY_CALIBRATION_EXTRA_HEIGHT      15     // Extra distance in mm past Z_###_POS to move
+  #define GANTRY_CALIBRATION_FEEDRATE         500     // Feedrate for correction move
+  //#define GANTRY_CALIBRATION_TO_MIN                 // Enable to calibrate Z in the MIN direction
+
+  //#define GANTRY_CALIBRATION_SAFE_POSITION  { X_CENTER, Y_CENTER } // Safe position for nozzle
+  //#define GANTRY_CALIBRATION_XY_PARK_FEEDRATE 3000  // XY Park Feedrate - MMM
+  //#define GANTRY_CALIBRATION_COMMANDS_PRE   ""
+  #define GANTRY_CALIBRATION_COMMANDS_POST  "G28"     // G28 highly recommended to ensure an accurate position
+#endif
+
+/**
  * MAX7219 Debug Matrix
  *
  * Add support for a low-cost 8x8 LED Matrix based on the Max7219 chip as a realtime status display.
@@ -3550,6 +3574,11 @@
 // M100 Free Memory Watcher to debug memory usage
 //
 //#define M100_FREE_MEMORY_WATCHER
+
+//
+// M42 - Set pin states
+//
+//#define DIRECT_PIN_CONTROL
 
 //
 // M43 - display pin status, toggle pins, watch pins, watch endstops & toggle LED, test servo probe
