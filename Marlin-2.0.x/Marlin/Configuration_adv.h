@@ -190,13 +190,13 @@
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
   #define THERMAL_PROTECTION_BED_PERIOD        20 // Seconds
-  #define THERMAL_PROTECTION_BED_HYSTERESIS     2 // Degrees Celsius
+  #define THERMAL_PROTECTION_BED_HYSTERESIS     4 // Degrees Celsius
 
   /**
    * As described above, except for the bed (M140/M190/M303).
    */
   #define WATCH_BED_TEMP_PERIOD                60 // Seconds
-  #define WATCH_BED_TEMP_INCREASE               2 // Degrees Celsius
+  #define WATCH_BED_TEMP_INCREASE               4 // Degrees Celsius
 #endif
 
 /**
@@ -346,7 +346,7 @@
  * Hotend Idle Timeout
  * Prevent filament in the nozzle from charring and causing a critical jam.
  */
-#define HOTEND_IDLE_TIMEOUT
+//#define HOTEND_IDLE_TIMEOUT
 #if ENABLED(HOTEND_IDLE_TIMEOUT)
   #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
   #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
@@ -769,10 +769,10 @@
 //
 // Add the G35 command to read bed corners to help adjust screws. Requires a bed probe.
 //
-//#define ASSISTED_TRAMMING
+#define ASSISTED_TRAMMING
 #if ENABLED(ASSISTED_TRAMMING)
   // Define positions for probing points, use the hotend as reference not the sensor.
-  #define TRAMMING_POINT_XY { {  20, 20 }, { 200,  20 }, { 200, 200 }, { 20, 200 } }
+  #define TRAMMING_POINT_XY { {  20, 20 }, { 280,  20 }, { 280, 280 }, { 20, 280 } }
 
   // Define positions names for probing points.
   #define TRAMMING_POINT_NAME_1 "Front-Left"
@@ -784,7 +784,7 @@
   #define RESTORE_LEVELING_AFTER_G35
 
   // Add a menu item for Assisted Tramming
-  //#define ASSISTED_TRAMMING_MENU_ITEM
+  #define ASSISTED_TRAMMING_MENU_ITEM
 
   /**
    * Screw thread:
@@ -2232,8 +2232,13 @@
 
   //X current may also 840 TEST THIS  
   #if AXIS_IS_TMC(X)
+<<<<<<< HEAD
     #define X_CURRENT       1118      // (mA) RMS current. Multiply by 1.414 for peak current.
     #define X_CURRENT_HOME  559  // (mA) RMS current for sensorless homing
+=======
+    #define X_CURRENT       800        // (mA) RMS current. Multiply by 1.414 for peak current.
+    #define X_CURRENT_HOME  X_CURRENT  // (mA) RMS current for sensorless homing
+>>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define X_MICROSTEPS     64    // 0..256
     #define X_RSENSE          0.11
     #define X_CHAIN_POS      -1    // <=0 : Not chained. 1 : MCU MOSI connected. 2 : Next in chain, ...
@@ -2248,8 +2253,13 @@
   #endif
 
   #if AXIS_IS_TMC(Y)
+<<<<<<< HEAD
     #define Y_CURRENT       1118
     #define Y_CURRENT_HOME  559
+=======
+    #define Y_CURRENT       800
+    #define Y_CURRENT_HOME  Y_CURRENT
+>>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define Y_MICROSTEPS     64
     #define Y_RSENSE          0.11
     #define Y_CHAIN_POS      -1
@@ -2264,8 +2274,13 @@
   #endif
 
   #if AXIS_IS_TMC(Z)
+<<<<<<< HEAD
     #define Z_CURRENT       1188
     #define Z_CURRENT_HOME  559
+=======
+    #define Z_CURRENT       800
+    #define Z_CURRENT_HOME  Z_CURRENT
+>>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define Z_MICROSTEPS     64
     #define Z_RSENSE          0.11
     #define Z_CHAIN_POS      -1
@@ -2296,7 +2311,11 @@
   #endif
 
   #if AXIS_IS_TMC(E0)
+<<<<<<< HEAD
     #define E0_CURRENT      1188
+=======
+    #define E0_CURRENT      800
+>>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
     #define E0_MICROSTEPS    64
     #define E0_RSENSE         0.11
     #define E0_CHAIN_POS     -1
@@ -2514,7 +2533,10 @@
    *
    * Comment *_STALL_SENSITIVITY to disable sensorless homing for that axis.
    */
+<<<<<<< HEAD
   //#define IMPROVE_HOMING_RELIABILITY
+=======
+>>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
   #define SENSORLESS_HOMING // StallGuard capable drivers only
 
   #if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
@@ -2528,7 +2550,7 @@
     //#define Z3_STALL_SENSITIVITY Z_STALL_SENSITIVITY
     //#define Z4_STALL_SENSITIVITY Z_STALL_SENSITIVITY
     //#define SPI_ENDSTOPS              // TMC2130 only
-    //#define IMPROVE_HOMING_RELIABILITY
+    #define IMPROVE_HOMING_RELIABILITY
   #endif
 
   /**
@@ -2541,7 +2563,11 @@
    *
    * Values from 0..1023, -1 to disable homing phase for that axis.
    */
+<<<<<<< HEAD
    //#define TMC_HOME_PHASE { 640, 640, -1 }
+=======
+  #define TMC_HOME_PHASE { 896, 896, 896 }
+>>>>>>> 222b2b5090153d7308af2ea76c147befbdd410a7
 
   /**
    * Beta feature!
