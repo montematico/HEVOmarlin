@@ -61,10 +61,10 @@
     #define X_MIN_PIN                      P1_26  // E0DET
   #endif
 #else
-  //#define X_STOP_PIN                       P1_29  //X-STOP
+  #define X_STOP_PIN                       P1_29  //X-STOP
   //CUSTOM
-  #define X_MIN_PIN P1_29
-  #define X_MAX_PIN P1_26
+  //#define X_MIN_PIN P1_29
+  //#define X_MAX_PIN P1_26
 #endif
 
 #ifdef Y_STALL_SENSITIVITY
@@ -75,10 +75,10 @@
     #define Y_MIN_PIN                      P1_25  // E1DET
   #endif
 #else
-  //#define Y_STOP_PIN                       P1_28  //Y-STOP
+  #define Y_STOP_PIN                       P1_28  //Y-STOP
   //CUSTOM
-  #define Y_MIN_PIN P1_28
-  #define Y_MAX_PIN P1_25
+  //#define Y_MIN_PIN P1_28
+  //#define Y_MAX_PIN P1_25
 #endif
 
 #ifdef Z_STALL_SENSITIVITY
@@ -98,7 +98,8 @@
 // Z Probe (when not Z_MIN_PIN)
 //
 #ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN                  P0_10
+  #define Z_MIN_PROBE_PIN                  P0_10 //Old pin with not broken board
+  //#define Z_MIN_PROBE_PIN P1_27 //The old Z_MIN Pin
 #endif
 
 //
