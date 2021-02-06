@@ -52,7 +52,6 @@ tags
 *.o
 *.obj
 *.ino.cpp
-*.bin
 
 # Precompiled Headers
 *.gch
@@ -185,6 +184,3 @@ cmake-build-*
 
 #Python
 __pycache__
-
-#old
-old.*
